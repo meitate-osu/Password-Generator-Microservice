@@ -23,7 +23,7 @@ function getRandomInt(max) {
   return crypto.randomInt(0, max);
 }
 
-// Build character pool based on options
+// Build character pool
 function buildCharPool(options) {
   let pool = "";
 
@@ -35,7 +35,7 @@ function buildCharPool(options) {
   return pool;
 }
 
-// Generate secure password
+// Generate password
 function generatePassword(length, pool) {
   let password = "";
 
@@ -57,7 +57,6 @@ app.post("/generate-password", (req, res) => {
     includeSymbols = false,
   } = req.body;
 
-  // Validate length
   if (typeof length !== "number" || length < 4 || length > 128) {
     return res.status(400).json({
       error: "Length must be a number between 4 and 128",
@@ -93,6 +92,12 @@ app.get("/", (req, res) => {
   res.json({ status: "Password microservice is running" });
 });
 
-app.listen(PORT, () => {
-  console.log(`Password microservice running on port ${PORT}`);
-});
+// ONLY START SERVER IF NOT IN TEST MODE
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Password microservice running on port ${PORT}`);
+  });
+}
+
+// Export for Jest / Supertest
+module.exports = app;
