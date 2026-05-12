@@ -135,7 +135,7 @@ The following diagram shows how a client interacts with the microservice to gene
 git clone https://github.com/meitate-osu/Password-Generator-Microservice.git
 ```
 
-3. Install dependencies:
+2. Install dependencies:
 
 ```bash
 npm install
