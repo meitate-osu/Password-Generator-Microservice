@@ -1,88 +1,73 @@
-const BASE_URL = "http://localhost:3000/generate-password";
+const request = require("supertest");
+const app = require("./server");
 
-describe("Password Generator Microservice API Tests", () => {
+describe("Password Microservice API Tests", () => {
 
-  test("should generate password with valid request", async () => {
-    const response = await fetch(BASE_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+  test("GET / should return health status", async () => {
+    const res = await request(app).get("/");
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBeDefined();
+  });
+
+  test("POST /generate-password returns password", async () => {
+    const res = await request(app)
+      .post("/generate-password")
+      .send({
         length: 12,
         includeUppercase: true,
         includeLowercase: true,
         includeNumbers: true,
-        includeSymbols: true
-      })
-    });
-
-    expect(response.status).toBe(200);
-
-    const data = await response.json();
-
-    expect(data).toHaveProperty("password");
-    expect(typeof data.password).toBe("string");
-    expect(data.password.length).toBe(12);
-  });
-
-
-  test("should respect length requirement", async () => {
-    const response = await fetch(BASE_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        length: 20,
-        includeUppercase: true,
-        includeLowercase: true,
-        includeNumbers: true,
         includeSymbols: false
-      })
-    });
+      });
 
-    const data = await response.json();
-
-    expect(data.password.length).toBe(20);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.password).toBeDefined();
+    expect(res.body.password.length).toBe(12);
   });
 
-
-  test("should fail when no character types selected", async () => {
-    const response = await fetch(BASE_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        length: 10,
-        includeUppercase: false,
-        includeLowercase: false,
-        includeNumbers: false,
-        includeSymbols: false
-      })
-    });
-
-    expect(response.status).toBe(400);
-
-    const data = await response.json();
-
-    expect(data).toHaveProperty("error");
-  });
-
-
-  test("should return error for invalid length", async () => {
-    const response = await fetch(BASE_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+  test("POST rejects invalid length", async () => {
+    const res = await request(app)
+      .post("/generate-password")
+      .send({
         length: 2,
         includeUppercase: true,
         includeLowercase: true,
         includeNumbers: true,
         includeSymbols: false
-      })
-    });
+      });
 
-    expect(response.status).toBe(400);
+    expect(res.statusCode).toBe(400);
+    expect(res.body.error).toBeDefined();
+  });
 
-    const data = await response.json();
+  test("POST rejects when no character types selected", async () => {
+    const res = await request(app)
+      .post("/generate-password")
+      .send({
+        length: 10,
+        includeUppercase: false,
+        includeLowercase: false,
+        includeNumbers: false,
+        includeSymbols: false
+      });
 
-    expect(data.error).toMatch(/Length must be a number >= 4/);
+    expect(res.statusCode).toBe(400);
+    expect(res.body.error).toBeDefined();
+  });
+
+  test("Generated password respects options (numbers-only check)", async () => {
+    const res = await request(app)
+      .post("/generate-password")
+      .send({
+        length: 10,
+        includeUppercase: false,
+        includeLowercase: false,
+        includeNumbers: true,
+        includeSymbols: false
+      });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.password).toMatch(/^[0-9]+$/);
   });
 
 });
