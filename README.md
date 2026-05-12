@@ -130,30 +130,30 @@ The following diagram shows how a client interacts with the microservice to gene
 ---
 
 # How to Run the Microservice
-1. Clone this repo:
-```bash
-git clone https://github.com/meitate-osu/Password-Generator-Microservice.git
-```
 
-2. Install dependencies:
+1. Install dependencies:
 
 ```bash
 npm install
 ```
 
-3. Start the server:
+2. Start the server:
 
 ```bash
-node server.js
+npm start
 ```
 
-4. API will run at:
-
+3. API will run at:
 ```
-http://localhost:3000
+http://localhost:3000/
 ```
 
-5. Test the server in the terminal:
+4. The example front end runs at:
+```
+http://localhost:3000/example.html
+```
+
+5. Test the server in terminal:
 ```
 npm test
 ```
