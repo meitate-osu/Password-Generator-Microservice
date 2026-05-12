@@ -1,0 +1,66 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #1e1e2f;
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  background: #2a2a40;
+  padding: 30px;
+  border-radius: 12px;
+  width: 350px;
+  text-align: center;
+  box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+.section {
+  margin: 15px 0;
+}
+
+input[type="range"] {
+  width: 100%;
+}
+
+.options {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+button {
+  background: #4caf50;
+  border: none;
+  padding: 10px 15px;
+  color: white;
+  cursor: pointer;
+  border-radius: 6px;
+  margin-top: 10px;
+  width: 100%;
+  font-size: 16px;
+}
+
+button:hover {
+  background: #45a049;
+}
+
+.output {
+  margin-top: 20px;
+}
+
+#passwordBox {
+  background: #111;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 6px;
+  word-break: break-all;
+  font-family: monospace;
+}

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Password Generator</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+
+  <div class="container">
+    <h1>Password Generator</h1>
+
+    <!-- Password Length -->
+    <div class="section">
+      <label for="length">Password Length: <span id="lengthValue">12</span></label>
+      <input type="range" id="length" min="4" max="32" value="12"/>
+    </div>
+
+    <!-- Options -->
+    <div class="section options">
+      <label><input type="checkbox" id="uppercase" checked /> Uppercase</label>
+      <label><input type="checkbox" id="lowercase" checked /> Lowercase</label>
+      <label><input type="checkbox" id="numbers" checked /> Numbers</label>
+      <label><input type="checkbox" id="symbols" /> Symbols</label>
+    </div>
+
+    <!-- Generate Button -->
+    <button id="generateBtn">Generate Password</button>
+
+    <!-- Output -->
+    <div class="output">
+      <p>Your Password:</p>
+      <div id="passwordBox">Click generate...</div>
+      <button onclick="copyPassword()">Copy</button>
+    </div>
+  </div>
+
+  <script>
+    const lengthSlider = document.getElementById("length");
+    const lengthValue = document.getElementById("lengthValue");
+    const passwordBox = document.getElementById("passwordBox");
+
+    lengthSlider.addEventListener("input", () => {
+      lengthValue.textContent = lengthSlider.value;
+    });
+
+    document.getElementById("generateBtn").addEventListener("click", async () => {
+      const response = await fetch("http://localhost:3000/generate-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          length: Number(lengthSlider.value),
+          includeUppercase: document.getElementById("uppercase").checked,
+          includeLowercase: document.getElementById("lowercase").checked,
+          includeNumbers: document.getElementById("numbers").checked,
+          includeSymbols: document.getElementById("symbols").checked
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.password) {
+        passwordBox.textContent = data.password;
+      } else {
+        passwordBox.textContent = "Error: " + data.error;
+      }
+    });
+
+    function copyPassword() {
+      const text = passwordBox.textContent;
+      navigator.clipboard.writeText(text);
+      alert("Password copied!");
+    }
+  </script>
+
+</body>
+</html>
