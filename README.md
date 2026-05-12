@@ -134,7 +134,7 @@ The following diagram shows how a client interacts with the microservice to gene
 A full demonstration of how the Password Generator Microservice works, including example requests, responses, and frontend integration, can be found here:
 
 **YouTube Demo Video:**
-[[PASTE YOUR YOUTUBE LINK HERE]](https://youtu.be/pa7baefC5oE)
+[CLICK HERE](https://youtu.be/pa7baefC5oE)
 
 ---
 
