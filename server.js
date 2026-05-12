@@ -57,9 +57,9 @@ app.post("/generate-password", (req, res) => {
     includeSymbols = false,
   } = req.body;
 
-  if (typeof length !== "number" || length < 4 || length > 128) {
+  if (typeof length !== "number" || length < 4 || length > 25) {
     return res.status(400).json({
-      error: "Length must be a number between 4 and 128",
+      error: "Length must be a number between 4 and 25",
     });
   }
 
