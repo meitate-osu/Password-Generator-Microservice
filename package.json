@@ -5,7 +5,8 @@
   "main": "client.js",
   "scripts": {
     "test": "jest --runInBand",
-    "start": "node server.js"
+    "start": "nodemon server.js",
+    "dev": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +18,7 @@
     "node-fetch": "^3.3.2"
   },
   "devDependencies": {
-    "jest": "^30.3.0"
+    "jest": "^30.3.0",
+    "nodemon": "^3.1.14"
   }
 }
