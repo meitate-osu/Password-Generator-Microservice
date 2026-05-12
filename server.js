@@ -1,37 +1,98 @@
-async function testPasswordAPI() {
-  console.log("🚀 Testing Password Generator Microservice...\n");
+const express = require("express");
+const cors = require("cors");
+const crypto = require("crypto");
+const path = require("path");
 
-  try {
-    const requestBody = {
-      length: 14,
-      includeUppercase: true,
-      includeLowercase: true,
-      includeNumbers: true,
-      includeSymbols: true
-    };
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-    console.log("📤 Sending request:", requestBody);
+app.use(cors());
+app.use(express.json());
 
-    const response = await fetch("http://localhost:3000/generate-password", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(requestBody)
-    });
+// Serve static frontend files
+app.use(express.static(path.join(__dirname, "public")));
 
-    console.log("\nResponse Status:", response.status);
+// Character sets
+const LOWER = "abcdefghijklmnopqrstuvwxyz";
+const UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const NUMBERS = "0123456789";
+const SYMBOLS = "!@#$%^&*()-_=+[]{}|;:,.<>?/";
 
-    const data = await response.json();
-
-    console.log("\nResponse:");
-    console.log(data);
-
-    console.log("\nPassword:", data.password);
-
-  } catch (err) {
-    console.error("Test failed:", err.message);
-  }
+// Secure random integer helper
+function getRandomInt(max) {
+  return crypto.randomInt(0, max);
 }
 
-testPasswordAPI();
+// Build character pool based on options
+function buildCharPool(options) {
+  let pool = "";
+
+  if (options.includeLowercase) pool += LOWER;
+  if (options.includeUppercase) pool += UPPER;
+  if (options.includeNumbers) pool += NUMBERS;
+  if (options.includeSymbols) pool += SYMBOLS;
+
+  return pool;
+}
+
+// Generate secure password
+function generatePassword(length, pool) {
+  let password = "";
+
+  for (let i = 0; i < length; i++) {
+    const idx = getRandomInt(pool.length);
+    password += pool[idx];
+  }
+
+  return password;
+}
+
+// POST /generate-password
+app.post("/generate-password", (req, res) => {
+  const {
+    length = 12,
+    includeUppercase = true,
+    includeLowercase = true,
+    includeNumbers = true,
+    includeSymbols = false,
+  } = req.body;
+
+  // Validate length
+  if (typeof length !== "number" || length < 4 || length > 128) {
+    return res.status(400).json({
+      error: "Length must be a number between 4 and 128",
+    });
+  }
+
+  const options = {
+    includeUppercase,
+    includeLowercase,
+    includeNumbers,
+    includeSymbols,
+  };
+
+  const pool = buildCharPool(options);
+
+  if (!pool.length) {
+    return res.status(400).json({
+      error: "At least one character type must be enabled",
+    });
+  }
+
+  const password = generatePassword(length, pool);
+
+  res.json({
+    password,
+    length,
+    options,
+  });
+});
+
+// Health check route
+app.get("/", (req, res) => {
+  res.json({ status: "Password microservice is running" });
+});
+
+app.listen(PORT, () => {
+  console.log(`Password microservice running on port ${PORT}`);
+});
