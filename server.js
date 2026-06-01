@@ -12,18 +12,15 @@ app.use(express.json());
 // Serve static frontend files
 app.use(express.static(path.join(__dirname, "public")));
 
-// Character sets
 const LOWER = "abcdefghijklmnopqrstuvwxyz";
 const UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const NUMBERS = "0123456789";
 const SYMBOLS = "!@#$%^&*()-_=+[]{}|;:,.<>?/";
 
-// Secure random integer helper
 function getRandomInt(max) {
   return crypto.randomInt(0, max);
 }
 
-// Build character pool
 function buildCharPool(options) {
   let pool = "";
 
@@ -35,7 +32,6 @@ function buildCharPool(options) {
   return pool;
 }
 
-// Generate password
 function generatePassword(length, pool) {
   let password = "";
 
@@ -47,7 +43,6 @@ function generatePassword(length, pool) {
   return password;
 }
 
-// POST /generate-password
 app.post("/generate-password", (req, res) => {
   const {
     length = 12,
